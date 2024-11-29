@@ -2,7 +2,7 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: action_pdf
+  username: postgresql
   host: <%= ENV.fetch("DATABASE_HOST", "postgres") %>
   port: <%= ENV.fetch("DATABASE_PORT", "5432") %>
 
@@ -17,5 +17,5 @@ test:
 production:
   <<: *default
   database: action_pdf_production
-  username: action_pdf
-  password:
+  username: postgres
+  password: postgres

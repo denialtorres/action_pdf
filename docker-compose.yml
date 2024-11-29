@@ -2,22 +2,12 @@ version: "3.8"
 
 services:
   postgres:
-    image: postgres:13.1-alpine
-    volumes:
-      - postgresql:/var/lib/postgresql/data:delegated
-      - ./init.sql:/data/application/init.sql
-    ports:
-      - "127.0.0.1:${DATABASE_PORT}:5432"
+    image: postgres:9.5
     environment:
-      PSQL_HISTFILE: /usr/src/app/log/.psql_history
-      POSTGRES_USER: action_pdf
-      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
     restart: on-failure
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U action_pdf"]
-      interval: 10s
-      timeout: 2s
-      retries: 10
     logging:
       driver: none
 
@@ -32,26 +22,21 @@ services:
       driver: none
 
   app:
-    build:
-      context: .
+    build: .
     depends_on:
       - postgres
       - redis
     ports:
       - "3001:3000" # Use port 3001 on the host instead of 3000
     environment:
-      DATABASE_HOST: postgres
-      DATABASE_PORT: 5432
-      DATABASE_URL: "postgresql://action_pdf@postgres:${DATABASE_PORT}/your_database_name"
       REDIS_URL: "redis://redis:${REDIS_PORT}/0"
       RAILS_ENV: "production"
       SECRET_KEY_BASE: "dummy_secret_key" # Replace with actual secret in production
     volumes:
       - .:/rails:delegated
+    # command: ./bin/rails server -b 0.0.0.
     stdin_open: true # Keeps stdin open
     tty: true # Allows an interactive terminal
-    restart: on-failure
-
 volumes:
   postgresql:
   redis:
