@@ -3,8 +3,8 @@ default: &default
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: action_pdf
-  host: <%= ENV.fetch("DATABASE_HOST") %>
-  port: <%= ENV.fetch("DATABASE_PORT") %>
+  host: <%= ENV.fetch("DATABASE_HOST", "postgres") %>
+  port: <%= ENV.fetch("DATABASE_PORT", "5432") %>
 
 development:
   <<: *default

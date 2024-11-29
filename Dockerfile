@@ -2,6 +2,7 @@
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
 ARG RUBY_VERSION=3.0.0
+
 FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
 
 # Rails app lives here
@@ -54,9 +55,24 @@ RUN useradd rails --create-home --shell /bin/bash && \
     chown -R rails:rails db log storage tmp
 USER rails:rails
 
+# Update the package lists for Debian package manager
+# Install Chromium and chromium-driver along with necessary dependencies for running in a headless environment
+# Switch to root to install system packages
+USER root
+
+# Install Chromium and its driver
+RUN apt-get update && \
+    apt-get install -y chromium chromium-driver && \
+    rm -rf /var/lib/apt/lists/*
+
+# Switch back to non-root user
+USER rails
+
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
-CMD ["./bin/rails", "server"]
+# EXPOSE 3000
+# CMD ["./bin/rails", "server"]
+# Start with an interactive shell
+CMD ["/bin/bash"]
