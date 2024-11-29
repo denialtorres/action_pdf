@@ -1,0 +1,21 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: action_pdf
+  host: <%= ENV.fetch("DATABASE_HOST") %>
+  port: <%= ENV.fetch("DATABASE_PORT") %>
+
+development:
+  <<: *default
+  database: action_pdf_development
+
+test:
+  <<: *default
+  database: action_pdf_test
+
+production:
+  <<: *default
+  database: action_pdf_production
+  username: action_pdf
+  password:
