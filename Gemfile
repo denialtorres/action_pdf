@@ -71,3 +71,6 @@ group :development, :test do
   gem "faker"
   gem "rspec-rails"
 end
+
+gem "grover", "~> 1.2"
+gem 'puppeteer-ruby'

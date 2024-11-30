@@ -33,6 +33,7 @@ services:
       RAILS_ENV: "development"
       SECRET_KEY_BASE: "dummy_secret_key" # Replace with actual secret in production
       DATABASE_URL: postgres://postgres:postgres@postgres/action_pdf_development
+      GROVER_NO_SANDBOX: true
     volumes:
       - .:/rails:delegated
     # command: ./bin/rails server -b 0.0.0.
