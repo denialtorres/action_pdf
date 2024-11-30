@@ -21,3 +21,9 @@ run the server inside the container
 ```
 bundle exec rails s -b 0.0.0.0
 ```
+
+
+precompile
+```
+bundle exec rails assets:precompile
+```
