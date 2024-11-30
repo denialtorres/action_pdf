@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
-  resources :posts
+  resources :posts do
+    resources :pdfs, only: :show, module: :posts
+  end
+
   root to: "posts#index"
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

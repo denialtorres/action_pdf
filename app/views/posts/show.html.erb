@@ -3,6 +3,7 @@
 <%= render @post %>
 
 <div>
+  <%= link_to "Download PDF", post_pdf_path(@post) %>
   <%= link_to "Edit this post", edit_post_path(@post) %> |
   <%= link_to "Back to posts", posts_path %>
 
