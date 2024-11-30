@@ -30,8 +30,9 @@ services:
       - "3001:3000" # Use port 3001 on the host instead of 3000
     environment:
       REDIS_URL: "redis://redis:${REDIS_PORT}/0"
-      RAILS_ENV: "production"
+      RAILS_ENV: "development"
       SECRET_KEY_BASE: "dummy_secret_key" # Replace with actual secret in production
+      DATABASE_URL: postgres://postgres:postgres@postgres/action_pdf_development
     volumes:
       - .:/rails:delegated
     # command: ./bin/rails server -b 0.0.0.
@@ -40,3 +41,6 @@ services:
 volumes:
   postgresql:
   redis:
+networks:
+  backend:
+    driver: "bridge"

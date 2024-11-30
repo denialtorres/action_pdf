@@ -9,10 +9,15 @@ default: &default
 development:
   <<: *default
   database: action_pdf_development
+  username: postgres
+  password: postgres
+  port: 5432
 
 test:
   <<: *default
   database: action_pdf_test
+  username: postgres
+  password: postgres
 
 production:
   <<: *default
