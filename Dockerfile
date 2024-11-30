@@ -7,6 +7,8 @@ FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
 
 # Rails app lives here
 WORKDIR /rails
+COPY package.json /rails/package.json
+COPY yarn.lock /rails/yarn.lock
 
 ENV RAILS_ENV="development" \
     BUNDLE_DEPLOYMENT="1" \
@@ -52,6 +54,7 @@ COPY --from=build /rails /rails
 # Grant write permissions to the /usr/local/bundle/config path
 RUN chmod -R 777 /usr/local/bundle/config
 
+
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \
     chown -R rails:rails db log storage tmp
@@ -63,12 +66,26 @@ USER rails:rails
 USER root
 
 # Install Chromium and its driver
-RUN apt-get update && \
-    apt-get install -y chromium chromium-driver && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+    && apt-get install -y wget gnupg \
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 
-# Switch back to non-root user
-USER rails
+# Install Node.js and npm
+RUN apt-get update \
+    && apt-get install -y curl \
+    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g yarn \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install puppeteer so it's available in the container.
+RUN npm init -y && npm i puppeteer
+RUN npm install
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
