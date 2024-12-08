@@ -1,9 +1,14 @@
 Rails.application.routes.draw do
+  devise_for :users do
+    get '/users/sign_out' => 'devise/sessions#destroy'
+  end
+
   resources :posts do
     resources :pdfs, only: :show, module: :posts
   end
 
-  root to: "posts#index"
+  get 'pages/index'
+  root 'pages#index'
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
