@@ -1,6 +1,16 @@
+<style>
+.pdfobject-container {
+   width: 1000px;
+   height: 700px;
+}
+</style>
+
+
 <p style="color: green"><%= notice %></p>
 
-<%= render @post %>
+<%# = render @post %>
+
+<div id="pdf-container" data-pdf-base64="<%= @pdf %>"></div>
 
 <div>
   <%= link_to "Download PDF", post_pdf_path(@post) %>

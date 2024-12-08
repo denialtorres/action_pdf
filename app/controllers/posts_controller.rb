@@ -8,6 +8,11 @@ class PostsController < ApplicationController
 
   # GET /posts/1 or /posts/1.json
   def show
+    html_content = render_to_string(partial: "posts/pdfs/post", locals: { post: @post })
+    grover = Grover.new(html_content)
+
+    pdf_content = grover.to_pdf
+    @pdf = "data:application/pdf;base64,#{Base64.strict_encode64(pdf_content)}"
   end
 
   # GET /posts/new

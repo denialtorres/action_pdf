@@ -54,7 +54,6 @@ COPY --from=build /rails /rails
 # Grant write permissions to the /usr/local/bundle/config path
 RUN chmod -R 777 /usr/local/bundle/config
 
-
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \
     chown -R rails:rails db log storage tmp
@@ -90,8 +89,9 @@ RUN npm install
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start the server by default, this can be overwritten at runtime
-# EXPOSE 3000
-# CMD ["./bin/rails", "server"]
+# Precompile assets
+RUN bundle exec rails assets:precompile
 # Start with an interactive shell
-CMD ["/bin/bash"]
+# CMD ["/bin/bash"]
+# Command to start the Rails server
+CMD ["bundle", "exec", "rails", "s", "-b", "0.0.0.0"]
