@@ -82,3 +82,80 @@ generate PDF with Grover gem
   # Get an inline PDF
   pdf = grover.to_pdf
 ```
+
+
+### Active Model as an Active Record Satellite
+
+```ruby
+ user = User.create!(email: "test@gmail.com",
+                    password: SecureRandom.hex(30),
+                    address: {country: "USA", city: "Bronx", street: "231st", zip: "10463"})
+```
+
+The value of address attribute its just a hash. We cant use it with Action Pack helpers; We cant extend it with custom logic.
+Wrapping in into an Active Model object could bring these benefits
+
+```ruby
+class User::Address
+  include ActiveModel::API
+  include ActiveModel::Attributes
+
+  attribute :country
+  attribute :city
+  attribute :street
+  attribute :zip
+end
+```
+
+in the User model
+```ruby
+  def address() = @address ||= Address.new(super)
+```
+
+```
+ user.address
+ =>
+ #<User::Address:0x000055a31f365570
+
+user.address.country
+ => "USA"
+```
+
+
+We can go futher and add validations to our address model, and thus, keep all the logic related to the users
+address dedicated to the model
+
+```ruby
+  class User::Address
+    include ActiveModel::API
+    include ActiveModel::Attributes
+
+    # .......
+    validates :country, :zip, presence: true
+  end
+```
+
+in the user model:
+```ruby
+  class User < ApplicationRecord
+    store :address, coder: JSON
+
+    validate do |record|
+      next if address.valid?
+
+      record.errors.add(:address, "is invalid")
+    end
+
+    def address() = @address ||= Address.new(super)
+  end
+```
+
+```ruby
+  user = User.create(email: "test1@gmail.com",
+                    password: SecureRandom.hex(30),
+                    address: {})
+
+  user.valid? #=> false
+
+  user.errors.full_messages #=>  ["Address is invalid"]
+```
